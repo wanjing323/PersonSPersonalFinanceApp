@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/queen_pink"
+    tools:context=".IncomeActivity"
+    android:orientation="vertical"
+    android:padding="30dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="30dp">
+
+        <ImageButton
+            android:id="@+id/inc_preday"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_baseline_arrow_left_24"
+            android:padding="5dp"
+            android:background="@color/queen_pink"
+            android:layout_weight="1"
+            android:gravity="end"/>
+
+        <TextView
+            android:id="@+id/inc_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rectangle"
+            android:text="27 July 2021"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="7dp"
+            android:textSize="20sp"
+            android:layout_gravity="center_vertical"/>
+
+        <ImageButton
+            android:id="@+id/inc_nextday"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_baseline_arrow_right_24"
+            android:padding="5dp"
+            android:background="@color/queen_pink"
+            android:layout_weight="1"
+            android:layout_gravity="right"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/resulttv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/incometv_bg"
+                android:hint="Add your description here"
+                android:textSize="15dp"
+                android:padding="10dp"
+                android:gravity="start"
+                android:layout_marginBottom="5dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.2">
+
+                <AutoCompleteTextView
+                    android:id="@+id/IncomeAutoCompleteTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Categories"
+                    android:textSize="15dp"
+                    android:textColor="@color/grey"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+            <ImageView
+                android:id="@+id/inc_img"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginHorizontal="5dp"/>
+
+            <ImageButton
+                android:id="@+id/incChsImg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:src="@drawable/ic_baseline_image_24"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:background="@drawable/circle_outline"
+                android:layout_weight="0.2"/>
+
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.7"
+        android:orientation="horizontal"
+        android:layout_marginTop="25dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/incometv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/rectangle_outline"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:paddingHorizontal="15dp"
+           android:hint="Income Amount"
+            android:textSize="15sp"
+            android:textColor="@color/grey"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="horizontal"
+        android:background="@drawable/round_corner"
+        android:paddingTop="10dp"
+      >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            >
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:onClick="sevenOnClick"
+                android:text="7"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="4"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="fourOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="1"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="oneOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="."
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:textStyle="bold"
+                android:onClick="dotOnClick"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="8"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="eightOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="5"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="fiveOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="2"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="twoOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="0"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="zeroOnClick"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginRight="5dp">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="9"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="nineOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="6"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="sixOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="3"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="threeOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_purple"
+                android:text="="
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:onClick="equalOnClick"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"
+            android:orientation="vertical">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg_2"
+                android:text="C"
+                android:textSize="15sp"
+                app:backgroundTint="#CBB4B3"
+                android:layout_margin="5dp"
+                android:onClick="clearOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg"
+                android:text="/"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:layout_margin="5dp"
+                android:onClick="divideOnClick"
+                />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg"
+                android:text="x"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:backgroundTint="@color/light_purple"
+                android:layout_margin="5dp"
+                android:onClick="multOnCLick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg"
+                android:text="-"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:layout_margin="5dp"
+                android:onClick="minusOnClick"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg"
+                android:text="+"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                app:backgroundTint="@color/light_purple"
+                android:layout_margin="5dp"
+                android:onClick="plusOnClick"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.7"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/button_bg_2"
+        android:text="Save"
+        app:backgroundTint="@color/light_purple"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginHorizontal="2dp"/>
+
+
+</LinearLayout>

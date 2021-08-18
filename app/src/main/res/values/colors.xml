@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_color">#FFB88F89</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="queen_pink">#E6D4D2</color>
+    <color name="queen_pink_dark">#E6C1B7</color>
+    <color name="light_purple">#DBCACA</color>
+    <color name="light_purple_2">#CBB4B3</color>
+    <color name="rosy_brown">#B89088</color>
+    <color name="white_chocolate">#ECE6DB</color>
+    <color name="bone">#F7F1E1</color>
+    <color name="bone_dark">#DED4BA</color>
+    <color name="bone_dark_2">#C9BD9D</color>
+    <color name="grey">#767676</color>
+    <color name="dashboard">#ECE6DB</color>
+    <color name="dashboard2">#AAA18F</color>
+    <color name="transaction">#C5ECB7</color>
+    <color name="transaction1">#7DAE6C</color>
+    <color name="transaction2">#47735B</color>
+</resources>

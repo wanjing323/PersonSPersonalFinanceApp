@@ -55,7 +55,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         String text1=expenses.getExpDate();
         holder.datetv.setText(expenses.getExpDate());
         holder.desc.setText(expenses.getDescription());
-        holder.amount.setText("- RM"+expenses.getAmount());
+        holder.amount.setText("- RM "+expenses.getAmount());
     }
 
     @Override

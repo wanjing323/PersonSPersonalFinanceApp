@@ -30,6 +30,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +48,8 @@ import java.util.Calendar;
 
 public class NewActivity extends AppCompatActivity {
 
+    private FirebaseUser user;
+    private String userID;
     private SharedPreferences sharedPrefs;
     private PieChart pieChart;
     private Expenses expenses;
@@ -86,12 +89,14 @@ public class NewActivity extends AppCompatActivity {
         sharedPrefs = getApplication().getSharedPreferences("default", Context.MODE_PRIVATE);
 
         uid = sharedPrefs.getString("uid", "");
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userID = user.getUid();
 
         expensesList=new ArrayList<>();
         viewmoretv=findViewById(R.id.viewmore);
         viewmoretv.setPaintFlags(viewmoretv.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        expenseReference = FirebaseDatabase.getInstance().getReference().child("Expenses");
-        incomeReference=FirebaseDatabase.getInstance().getReference().child("Income");
+        expenseReference = FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Expenses");
+        incomeReference=FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Income");
         totalExtv=findViewById(R.id.total_Expenses);
         totalIntv=findViewById(R.id.total_Income);
         monthYr=findViewById(R.id.monthYearTv);
@@ -140,10 +145,7 @@ public class NewActivity extends AppCompatActivity {
     }
 
     private void getTotalIncomeExpensesPerMonth() {
-
-
-
-        expenseReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+        expenseReference.orderByChild("monthYear").equalTo(getCurrentMonthYear()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
@@ -151,10 +153,7 @@ public class NewActivity extends AppCompatActivity {
                     if(exModel.getMonthYear().equals(getCurrentMonthYear())){
                         totalExpenses += Double.parseDouble(exModel.getAmount());
                     }
-
                 }
-
-
                 totalExtv.setText("RM "+totalExpenses);
 
             }
@@ -164,7 +163,7 @@ public class NewActivity extends AppCompatActivity {
             }
         });
 
-        incomeReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+        incomeReference.orderByChild("monthYear").equalTo(getCurrentMonthYear()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
@@ -287,7 +286,7 @@ public class NewActivity extends AppCompatActivity {
     }
 
     private void loadPieChartData() {
-        expenseReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener(){
+        expenseReference.orderByChild("monthYear").equalTo(getCurrentMonthYear()).addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ds : snapshot.getChildren()) {

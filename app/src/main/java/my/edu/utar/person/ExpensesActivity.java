@@ -35,8 +35,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -85,9 +83,6 @@ public class ExpensesActivity extends AppCompatActivity {
     String expensesCategory;
     String uid;
 
-    private FirebaseUser user;
-    private String userID;
-
     private StorageTask uploadTask;
     public Uri imgUri;
 
@@ -105,12 +100,10 @@ public class ExpensesActivity extends AppCompatActivity {
         actionBar.setTitle(Html.fromHtml("<font color=\"white\">" + "Expenses" + "</font>"));
 
 //        Objects.requireNonNull(getSupportActionBar()).hide();
-        user = FirebaseAuth.getInstance().getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference("ExpensesImages");
-        expenseReference = FirebaseDatabase.getInstance().getReference("Users");
-        userID = user.getUid();
-//        Intent intent = getIntent();
-//        uid = intent.getStringExtra("uid");
+        expenseReference = FirebaseDatabase.getInstance().getReference().child("Expenses");
+        Intent intent = getIntent();
+        uid = intent.getStringExtra("uid");
 
         expenseTV = (TextView)findViewById(R.id.expensetv);
         expenseET = (EditText)findViewById(R.id.resultstv);
@@ -246,14 +239,14 @@ public class ExpensesActivity extends AppCompatActivity {
             String key = expenseReference.push().getKey();
             if(imageView.getDrawable()==null){
                 Expenses expenses = new Expenses(key, expenseText, description, "N/A",dateText,expensesCategory,monthYearText,category_monthYear,uid);
-                expenseReference.child(userID).child("Expenses").child(key).setValue(expenses);
+                expenseReference.child(key).setValue(expenses);
                 finish();
                 startActivity(getIntent());
             }else{
                 String imageId;
                 imageId = System.currentTimeMillis()+"."+getExtension(imgUri);
                 Expenses expenses = new Expenses(key, expenseText, description, imageId,dateText,expensesCategory,monthYearText,category_monthYear,uid);
-                expenseReference.child(userID).child("Expenses").child(key).setValue(expenses);
+                expenseReference.child(key).setValue(expenses);
                 StorageReference ref = storageReference.child(imageId);
 
                 uploadTask =ref.putFile(imgUri).

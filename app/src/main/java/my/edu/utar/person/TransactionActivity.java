@@ -22,9 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,16 +35,19 @@ import java.util.Calendar;
 
 public class TransactionActivity extends AppCompatActivity {
 
+    private String key;
     DatabaseReference expensesReference;
     private TextView datetv;
+    private SearchView search;
+    private Income income;
+    private Expenses expenses;
     private RecyclerView transactionRecyclerView;
     private TransactionRecyclerAdapter adapter;
+    private ArrayList<Expenses> expensesList;
     private TextView emptyExpenses;
     private ImageButton toIncomeBtn;
     private String uid;
-    private SearchTransactionAdapter searchTransactionAdapter;
-    private FirebaseUser user;
-    private String userID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +62,13 @@ public class TransactionActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        userID = user.getUid();
 
         datetv = findViewById(R.id.dateTitle);
         transactionRecyclerView= findViewById(R.id.expensesRecyclerView);
         emptyExpenses=findViewById(R.id.noExpenses);
         toIncomeBtn=findViewById(R.id.toIncome);
-        expensesReference=FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Expenses");
+        expensesList = new ArrayList<>();
+        expensesReference=FirebaseDatabase.getInstance().getReference().child("Expenses");
         transactionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         final Handler handler = new Handler(getMainLooper());
@@ -79,7 +78,7 @@ public class TransactionActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                expensesReference.orderByChild("expDate").equalTo(datetv.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                expensesReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for(DataSnapshot ds : snapshot.getChildren()){
@@ -143,7 +142,7 @@ public class TransactionActivity extends AppCompatActivity {
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
-                                expensesReference.orderByChild("expDate").equalTo(datetv.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                expensesReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         for(DataSnapshot ds : snapshot.getChildren()) {
@@ -198,42 +197,9 @@ public class TransactionActivity extends AppCompatActivity {
             }
         });
 
-        FirebaseRecyclerOptions<Expenses> options = new FirebaseRecyclerOptions.Builder<Expenses>()
-                .setQuery(FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Expenses"), Expenses.class)
-                .build();
-
-        searchTransactionAdapter = new SearchTransactionAdapter(options);
-        transactionRecyclerView.setAdapter(searchTransactionAdapter);
-
-        SearchView searchView = findViewById(R.id.search);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                search(query);
-                Toast.makeText(TransactionActivity.this, "Searching...", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                search(newText);
-                Toast.makeText(TransactionActivity.this, "Searching...", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
     }
 
-    private void search (String s) {
 
-        FirebaseRecyclerOptions<Expenses> options = new FirebaseRecyclerOptions.Builder<Expenses>()
-                .setQuery(FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Expenses").orderByChild("description").startAt(s).endAt(s+"~"), Expenses.class)
-                .build();
-
-        searchTransactionAdapter = new SearchTransactionAdapter(options);
-        searchTransactionAdapter.startListening();
-        transactionRecyclerView.setAdapter(searchTransactionAdapter);
-
-    }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);

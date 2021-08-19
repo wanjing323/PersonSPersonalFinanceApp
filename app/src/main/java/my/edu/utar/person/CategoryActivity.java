@@ -19,8 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,8 +44,6 @@ public class CategoryActivity extends AppCompatActivity {
     private ImageButton preMonthBtn;
     private TextView currentMonthTv;
     String uid;
-    private FirebaseUser user;
-    private String userID;
 
 
     @Override
@@ -63,8 +59,6 @@ public class CategoryActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        userID = user.getUid();
 
         spendCatAutoCompleteTV = findViewById(R.id.spendingCatAutoCompleteTextView);
         spendCatRecyclerView = findViewById(R.id.categoryRecyclerView);
@@ -129,12 +123,12 @@ public class CategoryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 expensesList.clear();
 
-                expensesReference = FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Expenses");
+                expensesReference = FirebaseDatabase.getInstance().getReference().child("Expenses");
                 String month_category = spendCatAutoCompleteTV.getText().toString()+"_"+currentMonthTv.getText().toString();
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        expensesReference.orderByChild("expensesCategory_Month").equalTo(month_category).addListenerForSingleValueEvent(new ValueEventListener() {
+                        expensesReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot ds : snapshot.getChildren()) {

@@ -35,8 +35,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -82,9 +80,6 @@ public class IncomeActivity extends AppCompatActivity {
     String incomeCategory;
     String uid;
 
-    private FirebaseUser user;
-    private String userID;
-
     private StorageTask uploadTask;
     public Uri imgUri2;
 
@@ -102,12 +97,11 @@ public class IncomeActivity extends AppCompatActivity {
         actionBar.setBackgroundDrawable(colorDrawable);
         actionBar.setTitle(Html.fromHtml("<font color=\"white\">" + "Income" + "</font>"));
 
-//        Intent intent = getIntent();
-//        uid = intent.getStringExtra("uid");
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        Intent intent = getIntent();
+        uid = intent.getStringExtra("uid");
+
         storageReference2 = FirebaseStorage.getInstance().getReference("IncomeImages");
-        incomeReference = FirebaseDatabase.getInstance().getReference().child("Users");
-        userID = user.getUid();
+        incomeReference = FirebaseDatabase.getInstance().getReference().child("Income");
 
         incomeTV = findViewById(R.id.incometv);
         incomeET = findViewById(R.id.resulttv);
@@ -247,7 +241,7 @@ public class IncomeActivity extends AppCompatActivity {
             String key = incomeReference.push().getKey();
             if(imageView.getDrawable()==null){
                 Income income = new Income(key, incomeText, description, dateText,"N/A",incomeCategory,monthYearText,uid);
-                incomeReference.child(userID).child("Income").child(key).setValue(income);
+                incomeReference.child(key).setValue(income);
                 finish();
                 startActivity(getIntent());
             }
@@ -256,7 +250,7 @@ public class IncomeActivity extends AppCompatActivity {
                 String imageId;
                 imageId = System.currentTimeMillis()+"."+getExtension(imgUri2);
                 Income income = new Income(key, incomeText, description, dateText,imageId,incomeCategory,monthYearText,uid);
-                incomeReference.child(userID).child("Income").child(key).setValue(income);
+                incomeReference.child(key).setValue(income);
 
                 StorageReference reff = storageReference2.child(imageId);
 

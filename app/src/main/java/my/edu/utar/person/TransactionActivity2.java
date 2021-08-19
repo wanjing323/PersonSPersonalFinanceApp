@@ -14,7 +14,6 @@ import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -22,9 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,17 +33,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class TransactionActivity2 extends AppCompatActivity {
-
+    private String key;
     DatabaseReference incomeReference;
     private TextView datetv;
+    private SearchView search;
+    private Income income;
+    private Expenses expenses;
     private RecyclerView transactionRecyclerView2;
     private TransactionRecyclerAdapter2 adapter2;
     private TextView emptyIncome;
     private ImageButton toExpensesBtn;
     private String uid;
-    private SearchTransactionAdapter2 searchTransactionAdapter2;
-    private FirebaseUser user;
-    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +56,14 @@ public class TransactionActivity2 extends AppCompatActivity {
         actionBar.setBackgroundDrawable(colorDrawable);
         actionBar.setTitle(Html.fromHtml("<font color=\"white\">" + "Transaction" + "</font>"));
 
-//        Intent intent = getIntent();
-//        uid = intent.getStringExtra("uid");
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        userID = user.getUid();
+        Intent intent = getIntent();
+        uid = intent.getStringExtra("uid");
 
         datetv = findViewById(R.id.dateTitle);
         transactionRecyclerView2 = findViewById(R.id.incomeRecyclerView);
         emptyIncome=findViewById(R.id.noIncome);
         toExpensesBtn=findViewById(R.id.toExpenses);
-        incomeReference=FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Income");
+        incomeReference=FirebaseDatabase.getInstance().getReference().child("Income");
         transactionRecyclerView2.setLayoutManager(new LinearLayoutManager(this));
         final Handler handler = new Handler(getMainLooper());
         final ArrayList<Income> incomeList=new ArrayList<>();
@@ -77,7 +71,7 @@ public class TransactionActivity2 extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                incomeReference.orderByChild("date").equalTo(datetv.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                incomeReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for(DataSnapshot ds : snapshot.getChildren()){
@@ -140,7 +134,7 @@ public class TransactionActivity2 extends AppCompatActivity {
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
-                                incomeReference.orderByChild("date").equalTo(datetv.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                incomeReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         for(DataSnapshot ds : snapshot.getChildren()){
@@ -191,42 +185,9 @@ public class TransactionActivity2 extends AppCompatActivity {
             }
         });
 
-        FirebaseRecyclerOptions<Income> options = new FirebaseRecyclerOptions.Builder<Income>()
-                .setQuery(FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Income"), Income.class)
-                .build();
-
-        searchTransactionAdapter2 = new SearchTransactionAdapter2(options);
-        transactionRecyclerView2.setAdapter(searchTransactionAdapter2);
-
-        SearchView searchView = findViewById(R.id.search);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                search(query);
-                Toast.makeText(TransactionActivity2.this, "Searching...", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                search(newText);
-                Toast.makeText(TransactionActivity2.this, "Searching...", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
     }
 
-    private void search (String s) {
 
-        FirebaseRecyclerOptions<Income> options = new FirebaseRecyclerOptions.Builder<Income>()
-                .setQuery(FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Income").orderByChild("description").startAt(s).endAt(s+"~"), Income.class)
-                .build();
-
-        searchTransactionAdapter2 = new SearchTransactionAdapter2(options);
-        searchTransactionAdapter2.startListening();
-        transactionRecyclerView2.setAdapter(searchTransactionAdapter2);
-
-    }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);

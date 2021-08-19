@@ -352,6 +352,7 @@ public class ExpensesActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 i = new Intent(ExpensesActivity.this, NewActivity.class);
+                i.putExtra("uid", uid);
                 startActivity(i);
                 return false;
             }
@@ -361,6 +362,7 @@ public class ExpensesActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 i = new Intent(ExpensesActivity.this, IncomeActivity.class);
+                i.putExtra("uid", uid);
                 startActivity(i);
                 return false;
             }

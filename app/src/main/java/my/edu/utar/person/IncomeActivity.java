@@ -357,6 +357,7 @@ public class IncomeActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 i = new Intent(IncomeActivity.this, NewActivity.class);
                 startActivity(i);
+                i.putExtra("uid", uid);
                 return false;
             }
         });
@@ -366,6 +367,7 @@ public class IncomeActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 i = new Intent(IncomeActivity.this, ExpensesActivity.class);
                 startActivity(i);
+                i.putExtra("uid", uid);
                 return false;
             }
         });

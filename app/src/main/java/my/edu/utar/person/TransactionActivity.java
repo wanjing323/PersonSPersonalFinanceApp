@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,19 +38,14 @@ import java.util.Calendar;
 
 public class TransactionActivity extends AppCompatActivity {
 
-    private String key;
     DatabaseReference expensesReference;
     private TextView datetv;
-    private SearchView search;
-    private Income income;
-    private Expenses expenses;
     private RecyclerView transactionRecyclerView;
     private TransactionRecyclerAdapter adapter;
     private ArrayList<Expenses> expensesList;
     private TextView emptyExpenses;
     private ImageButton toIncomeBtn;
     private String uid;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,9 +195,66 @@ public class TransactionActivity extends AppCompatActivity {
             }
         });
 
+        SearchView searchView;
+        searchView = findViewById(R.id.search);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                search(query);
+                Toast.makeText(TransactionActivity.this, "Seaching...", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                search(newText);
+                Toast.makeText(TransactionActivity.this, "Seaching...", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
     }
 
+    private void search(String s) {
+        expensesList.clear();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                expensesReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        for(DataSnapshot ds : snapshot.getChildren()) {
+                            Expenses model = ds.getValue(Expenses.class);
+                            if(model.getDescription().startsWith(s)) {
+                                expensesList.add(model);
+                            }
+                        }
+                        Handler handler = new Handler(getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(expensesList.isEmpty()){
+                                    emptyExpenses.setVisibility(View.VISIBLE);
+                                }else{
+                                    emptyExpenses.setVisibility(View.GONE);
+                                }
+                                adapter = new TransactionRecyclerAdapter(expensesList, TransactionActivity.this);
+                                transactionRecyclerView.setAdapter(adapter);
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Toast.makeText(TransactionActivity.this, "read fail", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        };
+        Thread myThread = new Thread(runnable);
+        myThread.start();
+
+    }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);

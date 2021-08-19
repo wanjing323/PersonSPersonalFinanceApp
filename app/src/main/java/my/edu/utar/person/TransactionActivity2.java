@@ -12,8 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -27,20 +29,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class TransactionActivity2 extends AppCompatActivity {
-    private String key;
+
     DatabaseReference incomeReference;
     private TextView datetv;
-    private SearchView search;
-    private Income income;
-    private Expenses expenses;
     private RecyclerView transactionRecyclerView2;
     private TransactionRecyclerAdapter2 adapter2;
+    private ArrayList<Income> incomeList;
     private TextView emptyIncome;
     private ImageButton toExpensesBtn;
     private String uid;
@@ -63,6 +65,7 @@ public class TransactionActivity2 extends AppCompatActivity {
         transactionRecyclerView2 = findViewById(R.id.incomeRecyclerView);
         emptyIncome=findViewById(R.id.noIncome);
         toExpensesBtn=findViewById(R.id.toExpenses);
+        incomeList = new ArrayList<>();
         incomeReference=FirebaseDatabase.getInstance().getReference().child("Income");
         transactionRecyclerView2.setLayoutManager(new LinearLayoutManager(this));
         final Handler handler = new Handler(getMainLooper());
@@ -185,9 +188,64 @@ public class TransactionActivity2 extends AppCompatActivity {
             }
         });
 
+        SearchView searchView;
+        searchView = findViewById(R.id.search);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                search(query);
+                Toast.makeText(TransactionActivity2.this, "Seaching...", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                search(newText);
+                Toast.makeText(TransactionActivity2.this, "Seaching...", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
     }
 
+    private void search(String s) {
+        incomeList.clear();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                incomeReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        for(DataSnapshot ds : snapshot.getChildren()) {
+                            Income model = ds.getValue(Income.class);
+                            if(model.getDescription().startsWith(s)) {
+                                incomeList.add(model);
+                            }
+                        }
+                        Handler handler = new Handler(getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(incomeList.isEmpty()) {
+                                    emptyIncome.setVisibility(View.VISIBLE);
+                                } else {
+                                    emptyIncome.setVisibility(View.GONE);
+                                }
+                                adapter2 = new TransactionRecyclerAdapter2(incomeList, TransactionActivity2.this);
+                                transactionRecyclerView2.setAdapter(adapter2);
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Toast.makeText(TransactionActivity2.this, "read fail", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        };
+        Thread myThread = new Thread(runnable);
+        myThread.start();
+    }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);

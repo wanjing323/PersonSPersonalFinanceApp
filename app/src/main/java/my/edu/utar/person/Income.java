@@ -6,7 +6,8 @@ public class Income {
     public Income() {
     }
 
-    public Income(String key, String income, String description, String date, String imageid, String incomeCategory, String monthYear, String uid) {
+    public Income(String key, String income, String description, String date, String imageid,
+                  String incomeCategory, String monthYear, String uid) {
         this.key = key;
         this.income = income;
         this.description = description;

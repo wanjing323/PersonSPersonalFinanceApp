@@ -36,7 +36,7 @@
                 android:layout_weight="1"
                 android:textStyle="bold"
                 android:gravity="center_vertical"
-                android:textSize="25dp"/>
+                android:textSize="17dp"/>
             <TextView
                 android:id="@+id/goalAmount"
                 android:layout_width="match_parent"

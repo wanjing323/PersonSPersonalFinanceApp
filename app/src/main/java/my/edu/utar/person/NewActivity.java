@@ -113,8 +113,6 @@ public class NewActivity extends AppCompatActivity {
 
         getTotalIncomeExpensesPerMonth();
 
-
-
         ImageView ivin = new ImageView(this);
         ivin = findViewById(R.id.addincomepng);
         ImageView ivexp = new ImageView(this);
@@ -140,9 +138,6 @@ public class NewActivity extends AppCompatActivity {
     }
 
     private void getTotalIncomeExpensesPerMonth() {
-
-
-
         expenseReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -151,19 +146,13 @@ public class NewActivity extends AppCompatActivity {
                     if(exModel.getMonthYear().equals(getCurrentMonthYear())){
                         totalExpenses += Double.parseDouble(exModel.getAmount());
                     }
-
-                }
-
-
-                totalExtv.setText("RM "+totalExpenses);
-
+                }totalExtv.setText("RM "+totalExpenses);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(NewActivity.this, "Read fail.", Toast.LENGTH_SHORT).show();
             }
         });
-
         incomeReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -172,23 +161,18 @@ public class NewActivity extends AppCompatActivity {
                     if(inModel.getMonthYear().equals(getCurrentMonthYear())) {
                         totalIncome += Double.parseDouble(inModel.getIncome());
                     }
-                }
-                totalIntv.setText("RM "+ totalIncome);
+                }totalIntv.setText("RM "+ totalIncome);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(NewActivity.this, "Read fail.", Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu,menu);
-
         menu.add("Transaction").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             Intent i;
             @Override
@@ -304,7 +288,6 @@ public class NewActivity extends AppCompatActivity {
                         if(category.equals("Food")){
                             foodAmt+=Double.parseDouble(expModel.getAmount());
                         }
-//
                         if(category.equals("Medical/Healthcare")){
                             mediAmt+=Double.parseDouble(expModel.getAmount());
                         }
@@ -317,7 +300,6 @@ public class NewActivity extends AppCompatActivity {
                         if(category.equals("Household Items")){
                             hhAmt+=Double.parseDouble(expModel.getAmount());
                         }
-//
                         if(category.equals("Saving")){
                             savingAmt=(Double.parseDouble(expModel.getAmount()));
                         }
@@ -325,10 +307,7 @@ public class NewActivity extends AppCompatActivity {
                             otherAmt+=Double.parseDouble(expModel.getAmount());
                         }
                     }
-
                 }
-
-
                 //PieEntry
                 ArrayList<PieEntry> entries = new ArrayList<>();
                 if(housingAmt>0){
@@ -387,8 +366,6 @@ public class NewActivity extends AppCompatActivity {
                 Toast.makeText(NewActivity.this, "Read fail.", Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
 
 
@@ -400,9 +377,9 @@ public class NewActivity extends AppCompatActivity {
     }
 
     private void signOut() {
-        HuaweiIdAuthParams authParams = new HuaweiIdAuthParamsHelper(HuaweiIdAuthParams.DEFAULT_AUTH_REQUEST_PARAM).setAuthorizationCode().createParams();
+        HuaweiIdAuthParams authParams = new HuaweiIdAuthParamsHelper(HuaweiIdAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
+                .setAuthorizationCode().createParams();
         HuaweiIdAuthService service = HuaweiIdAuthManager.getService(getApplicationContext(), authParams);
-
         String authType = sharedPrefs.getString("loginType", "");
         if (authType.equals("HUAWEI")) {
             sharedPrefs.edit().clear().commit();

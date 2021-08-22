@@ -7,7 +7,8 @@ public class Expenses {
     public Expenses() {
     }
 
-    public Expenses(String key, String amount, String description, String imageId, String expDate, String expensesCategory, String monthYear, String expensesCategory_Month ,String uid) {
+    public Expenses(String key, String amount, String description, String imageId, String expDate,
+                    String expensesCategory, String monthYear, String expensesCategory_Month ,String uid) {
         this.key = key;
         this.amount = amount;
         this.description = description;

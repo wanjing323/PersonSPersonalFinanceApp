@@ -47,7 +47,7 @@ public class PiggyBankActivity extends AppCompatActivity implements DialogCloseL
     Button viewCompGoal;
     DatabaseReference goalReference;
     CircleProgress circleProgress;
-    String uid;
+    private String uid;
 
     PiggyBank piggyBank;
     private String currentKey="A1";
@@ -95,7 +95,6 @@ public class PiggyBankActivity extends AppCompatActivity implements DialogCloseL
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     }
-
                 }
                 else {
 
@@ -136,6 +135,7 @@ public class PiggyBankActivity extends AppCompatActivity implements DialogCloseL
                     }
                 }
                 goalReference.child(currentKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @SuppressLint("ResourceAsColor")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         piggyBank = snapshot.getValue(PiggyBank.class);
@@ -144,110 +144,16 @@ public class PiggyBankActivity extends AppCompatActivity implements DialogCloseL
                             goalAmount.setText("RM " + piggyBank.getGoalAmount());
                             latestUpdate.setText(piggyBank.getLatestUpdate());
                             circleProgress.setProgress(Double.valueOf(piggyBank.getProgressPerctg()).intValue());
-
-                            //progressPerctg.setText(df.format(Double.parseDouble(piggyBank.getProgressPerctg()))+"%");
                             amountLeft.setText("RM " + df.format(Double.parseDouble(piggyBank.getAmountLeft())));
-                            amountSaved.setText("Congratulation!\nYou had saved RM" + df.format(Double.parseDouble(piggyBank.getAmountSaved())));
+                            amountSaved.setText("Congratulation!\nYou had saved RM" + df.format(Double.parseDouble(
+                                    piggyBank.getAmountSaved())));
 
                             if (piggyBank.getStatus().equals("1")) {
                                 saveMoneyBtn.setEnabled(false);
                                 saveMoneyBtn.setTextColor(R.color.light_purple_2);
-                                Toast.makeText(PiggyBankActivity.this, "Congratulation! You had achieved your goal. You can change the goal now.", Toast.LENGTH_SHORT).show();
-                            } else {
-                                saveMoneyBtn.setEnabled(true);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-                    }
-
-                                                  @Override
-                                                  public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-                                                  }
-
-        });
-
-        editGoalBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditGoalAndAmount.newInstance(currentKey,PiggyBankActivity.this ).show(getSupportFragmentManager(), EditGoalAndAmount.TAG);
-            }
-        });
-
-
-
-        chgNewGoalBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ChangeGoal.newInstance( PiggyBankActivity.this,uid).show(getSupportFragmentManager(), ChangeGoal.TAG);
-                query2.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            PiggyBank model = ds.getValue(PiggyBank.class);
-                            if (model.getLatest().equals("latest")) {
-                                currentKey = model.getKey();
-                            }
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        throw databaseError.toException();
-                    }
-                });
-            }
-        });
-        saveMoneyBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SaveMoreMoney.newInstance(currentKey,PiggyBankActivity.this,uid ).show(getSupportFragmentManager(), SaveMoreMoney.TAG);
-            }
-        });
-
-
-
-    }
-
-    @Override
-    public void handleDialogClose(DialogInterface dialog){
-        DecimalFormat df = new DecimalFormat("###.##");
-        DecimalFormat df1 = new DecimalFormat("###");
-
-        Query query2 = goalReference.orderByChild("uid").equalTo(uid);
-        query2.addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    PiggyBank model = ds.getValue(PiggyBank.class);
-                    if (model.getLatest().equals("latest")) {
-                        currentKey = model.getKey();
-                    }
-                }
-                goalReference.child(currentKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        piggyBank = snapshot.getValue(PiggyBank.class);
-                        if (piggyBank != null) {
-                            goalTitle.setText("Goal: " + piggyBank.getGoalTitle());
-                            goalAmount.setText("RM " + piggyBank.getGoalAmount());
-                            latestUpdate.setText(piggyBank.getLatestUpdate());
-                            circleProgress.setProgress(Double.valueOf(piggyBank.getProgressPerctg()).intValue());
-
-                            //progressPerctg.setText(df.format(Double.parseDouble(piggyBank.getProgressPerctg()))+"%");
-                            amountLeft.setText("RM " + df.format(Double.parseDouble(piggyBank.getAmountLeft())));
-                            amountSaved.setText("Congratulation!\nYou had saved RM" + df.format(Double.parseDouble(piggyBank.getAmountSaved())));
-
-                            if (piggyBank.getStatus().equals("1")) {
-                                saveMoneyBtn.setEnabled(false);
-                                saveMoneyBtn.setTextColor(R.color.light_purple_2);
-                                Toast.makeText(PiggyBankActivity.this, "Congratulation! You had achieved your goal. You can change the goal now.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PiggyBankActivity.this,
+                                        "Congratulation! You had achieved your goal. You can change the goal now.",
+                                        Toast.LENGTH_SHORT).show();
                             } else {
                                 saveMoneyBtn.setEnabled(true);
                             }
@@ -268,6 +174,111 @@ public class PiggyBankActivity extends AppCompatActivity implements DialogCloseL
 
         });
 
+        editGoalBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditGoalAndAmount.newInstance(currentKey,PiggyBankActivity.this )
+                        .show(getSupportFragmentManager(), EditGoalAndAmount.TAG);
+            }
+        });
+
+        chgNewGoalBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChangeGoal.newInstance( PiggyBankActivity.this,uid)
+                        .show(getSupportFragmentManager(), ChangeGoal.TAG);
+                query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            PiggyBank model = ds.getValue(PiggyBank.class);
+                            if (model.getLatest().equals("latest")) {
+                                currentKey = model.getKey();
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        throw databaseError.toException();
+                    }
+                });
+            }
+        });
+        saveMoneyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SaveMoreMoney.newInstance(currentKey,PiggyBankActivity.this,uid )
+                        .show(getSupportFragmentManager(), SaveMoreMoney.TAG);
+            }
+        });
+    }
+
+    @Override
+    public void handleDialogClose(DialogInterface dialog){
+        goalTitle= findViewById(R.id.goal);
+        goalAmount= findViewById(R.id.goalAmount);
+        editGoalBtn=findViewById(R.id.editGoal);
+        latestUpdate = findViewById(R.id.latest_update);
+        //progressPerctg = findViewById(R.id.progress_tv1);
+        amountLeft = findViewById(R.id.progress_tv2);
+        amountSaved = findViewById(R.id.progress_tv3);
+        saveMoneyBtn = findViewById(R.id.saveMoneyBtn);
+        chgNewGoalBtn = findViewById(R.id.chgGoalBtn);
+        // viewCompGoal = findViewById(R.id.viewSavingBtn);
+        editGoalBtn = findViewById(R.id.editGoal);
+        circleProgress = findViewById(R.id.circle_progress);
+
+        DecimalFormat df = new DecimalFormat("###.##");
+        DecimalFormat df1 = new DecimalFormat("###");
+
+        Query query2 = goalReference.orderByChild("uid").equalTo(uid);
+        query2.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    PiggyBank model = ds.getValue(PiggyBank.class);
+                    if (model.getLatest().equals("latest")) {
+                        currentKey = model.getKey();
+                    }
+                }
+                goalReference.child(currentKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @SuppressLint("ResourceAsColor")
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        piggyBank = snapshot.getValue(PiggyBank.class);
+                        if (piggyBank != null) {
+                            goalTitle.setText("Goal: " + piggyBank.getGoalTitle());
+                            goalAmount.setText("RM " + piggyBank.getGoalAmount());
+                            latestUpdate.setText(piggyBank.getLatestUpdate());
+                            circleProgress.setProgress(Double.valueOf(piggyBank.getProgressPerctg()).intValue());
+
+                            //progressPerctg.setText(df.format(Double.parseDouble(piggyBank.getProgressPerctg()))+"%");
+                            amountLeft.setText("RM " + df.format(Double.parseDouble(piggyBank.getAmountLeft())));
+                            amountSaved.setText("Congratulation!\nYou had saved RM" +
+                                    df.format(Double.parseDouble(piggyBank.getAmountSaved())));
+
+                            if (piggyBank.getStatus().equals("1")) {
+                                saveMoneyBtn.setEnabled(false);
+                                saveMoneyBtn.setTextColor(R.color.light_purple_2);
+                                Toast.makeText(PiggyBankActivity.this,
+                                        "Congratulation! You had achieved your goal. You can change the goal now.",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                saveMoneyBtn.setEnabled(true);
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+            }
+        });
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -6,7 +6,8 @@ public class PiggyBank {
     public PiggyBank() {
     }
 
-    public PiggyBank(String key, String goalTitle, String goalAmount, String latestUpdate, String progressPerctg, String amountLeft, String amountSaved, String status, String uid,String latest) {
+    public PiggyBank(String key, String goalTitle, String goalAmount, String latestUpdate, String progressPerctg,
+                     String amountLeft, String amountSaved, String status, String uid,String latest) {
         this.key = key;
         this.goalTitle = goalTitle;
         this.goalAmount = goalAmount;

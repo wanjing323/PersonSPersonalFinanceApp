@@ -51,7 +51,8 @@ public class ChangeGoal extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.change_goal, container, false);
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         return view;
@@ -75,13 +76,12 @@ public class ChangeGoal extends BottomSheetDialogFragment {
                     Toast.makeText(getContext(), "Goal title is required", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 if (TextUtils.isEmpty(newAmounttv.getText().toString())){
                     Toast.makeText(getContext(), "Goal amount is required", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                changeGoalReference.orderByChild("uid").equalTo(userid).addListenerForSingleValueEvent(new ValueEventListener() {
+                changeGoalReference.orderByChild("uid").equalTo(userid)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for(DataSnapshot ds : dataSnapshot.getChildren()){

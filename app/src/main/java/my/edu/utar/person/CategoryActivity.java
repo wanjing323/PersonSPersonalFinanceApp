@@ -122,13 +122,13 @@ public class CategoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 expensesList.clear();
-
                 expensesReference = FirebaseDatabase.getInstance().getReference().child("Expenses");
                 String month_category = spendCatAutoCompleteTV.getText().toString()+"_"+currentMonthTv.getText().toString();
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        expensesReference.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                        expensesReference.orderByChild("uid").equalTo(uid)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot ds : snapshot.getChildren()) {
@@ -136,7 +136,6 @@ public class CategoryActivity extends AppCompatActivity {
                                     if(model1.getExpensesCategory_Month().equals(month_category)){
                                         expensesList.add(model1);
                                     }
-
                                 }
                                 //handler
                                 handler.post(new Runnable() {
@@ -147,16 +146,11 @@ public class CategoryActivity extends AppCompatActivity {
                                         } else {
                                             noSpendCat.setVisibility(View.GONE);
                                         }
-
                                         adapter = new CategoryRecyclerAdapter(expensesList, CategoryActivity.this);
                                         spendCatRecyclerView.setAdapter(adapter);
-
                                     }
                                 });
-
-
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
                                 Toast.makeText(CategoryActivity.this, "read fail", Toast.LENGTH_SHORT).show();

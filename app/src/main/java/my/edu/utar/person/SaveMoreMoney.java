@@ -64,7 +64,8 @@ public class SaveMoreMoney extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.new_saving, container, false);
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         return view;
@@ -111,9 +112,6 @@ public class SaveMoreMoney extends BottomSheetDialogFragment {
                     Toast.makeText(getContext(), "Saving amount is required", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-
-
                 savingReference = FirebaseDatabase.getInstance().getReference("Goal");
                 expensesReference = FirebaseDatabase.getInstance().getReference("Expenses");
                 savingReference.child(goalKey).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -127,7 +125,8 @@ public class SaveMoreMoney extends BottomSheetDialogFragment {
 
                             amount=Double.parseDouble(newSavingAmount.getText().toString());
                             if(amount>oldAmountLeft){
-                                Toast.makeText(piggyActivity, "Sorry! Only "+oldAmountLeft+" is needed to reach goal.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(piggyActivity, "Sorry! Only "+oldAmountLeft
+                                        +" is needed to reach goal.", Toast.LENGTH_SHORT).show();
                                 return;
                             }else{
                                 newAmountSaved = amount+oldAmountSaved;
@@ -151,7 +150,9 @@ public class SaveMoreMoney extends BottomSheetDialogFragment {
 
                                 //Update expenses database
                                 String key = expensesReference.push().getKey();
-                                Expenses expenses = new Expenses(key, String.valueOf(newAmountSaved), "Saving in Person$ Piggy Bank", "N/A",currentDate,"Savings",monthYearText,category_monthYear,userid);
+                                Expenses expenses = new Expenses(key, String.valueOf(amount),
+                                        "Saving in Person$ Piggy Bank", "N/A",currentDate,
+                                        "Savings",monthYearText,category_monthYear,userid);
                                 expensesReference.child(key).setValue(expenses);
                             }
                         }

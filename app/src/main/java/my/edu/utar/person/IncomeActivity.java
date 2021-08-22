@@ -87,10 +87,8 @@ public class IncomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_income);
-//        Objects.requireNonNull(getSupportActionBar()).hide();
 
         mySQLiteAdapter = new SQLiteAdapter(this);
-
         ActionBar actionBar;
         actionBar = getSupportActionBar();
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#CBB4B3"));
@@ -162,11 +160,9 @@ public class IncomeActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
                 String nextday = sdf.format(calendar.getTime());
                 datetv.setText(nextday);
             }
-
         });
 
         //date picker
@@ -201,9 +197,6 @@ public class IncomeActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
 }
     private void saveContent() {
 
@@ -237,43 +230,43 @@ public class IncomeActivity extends AppCompatActivity {
         if(incomeText.contains("+")||incomeText.contains("-")||incomeText.contains("*")||incomeText.contains("/")){
             Toast.makeText(IncomeActivity.this, "The equation is not calculated", Toast.LENGTH_SHORT).show();
         }else {
-            //save to firebase storage
+            //no image attached
             String key = incomeReference.push().getKey();
             if(imageView.getDrawable()==null){
-                Income income = new Income(key, incomeText, description, dateText,"N/A",incomeCategory,monthYearText,uid);
+                Income income = new Income(key, incomeText, description, dateText,"N/A",incomeCategory,
+                        monthYearText,uid);
                 incomeReference.child(key).setValue(income);
                 finish();
                 startActivity(getIntent());
             }
             else{
-                //save image into storage
+                //have image attached
                 String imageId;
                 imageId = System.currentTimeMillis()+"."+getExtension(imgUri2);
                 Income income = new Income(key, incomeText, description, dateText,imageId,incomeCategory,monthYearText,uid);
                 incomeReference.child(key).setValue(income);
 
                 StorageReference reff = storageReference2.child(imageId);
-
                 uploadTask =reff.putFile(imgUri2).
                         addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess (UploadTask.TaskSnapshot taskSnapshot){
                                 //Uri uploadUri = taskSnapshot.getUploadSessionUri();
-                                Toast.makeText(IncomeActivity.this, "Image uploaded successfully", Toast.LENGTH_SHORT).show();
-
+                                Toast.makeText(IncomeActivity.this, "Image uploaded successfully",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }).
                         addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure (@NonNull Exception e){
-                                Toast.makeText(IncomeActivity.this, "Fail to upload image", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(IncomeActivity.this, "Fail to upload image", Toast.LENGTH_SHORT)
+                                        .show();
                             }
                         });
                 finish();
                 startActivity(getIntent());
-
             }
-            }
+        }
 
             Toast.makeText(IncomeActivity.this, "Data saved successfully.", Toast.LENGTH_LONG).show();
         }
@@ -295,12 +288,6 @@ public class IncomeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 100) {
-//            Bitmap captureImage = (Bitmap) data.getExtras().get("data");
-//            imgUri = data.getData();
-//            imageView.setImageBitmap(captureImage);
-//        }
-
         if(requestCode==1 && resultCode==RESULT_OK && data!=null && data.getData()!=null){
             imgUri2 = data.getData();
             imageView.setImageURI(imgUri2);
@@ -332,151 +319,17 @@ public class IncomeActivity extends AppCompatActivity {
     }
 
     public void equalOnClick(View view) {
-
         Double result = null;
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("rhino");
-
         try {
             result = (double)engine.eval(workings);
         } catch (ScriptException e) {
             Toast.makeText(this, "Invalid Input", Toast.LENGTH_SHORT).show();
         }
-
         if(result != null)
             workings = "";
             incomeTV.setText(String.valueOf(result.doubleValue()));
     }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu,menu);
-
-        menu.add("Home Page").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            Intent i;
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                i = new Intent(IncomeActivity.this, NewActivity.class);
-                startActivity(i);
-                i.putExtra("uid", uid);
-                return false;
-            }
-        });
-        menu.add("Expenses").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            Intent i;
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                i = new Intent(IncomeActivity.this, ExpensesActivity.class);
-                startActivity(i);
-                i.putExtra("uid", uid);
-                return false;
-            }
-        });
-        menu.add("Set notification alarm")
-                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        inputDialog();
-                        return true;
-                    }
-                });
-        menu.add("Close notification alarm")
-                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        Calendar calendar = Calendar.getInstance();
-                        int year = calendar.get(Calendar.YEAR);
-                        int month = calendar.get(Calendar.MONTH) + 1;
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                        int min = calendar.get(Calendar.MINUTE);
-
-                        String title = "Cancellation";
-                        String content = "The income notification alarm is cancelled!";
-                        TimeNotification newData = new TimeNotification(title, content, hour, min, year, month, day);
-                        mySQLiteAdapter.addNotificationList(newData);
-
-                        Intent i = new Intent(IncomeActivity.this, AlertReceiver.class);
-                        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-                        PendingIntent alarmIntent = PendingIntent.getBroadcast(IncomeActivity.this, 2, i, PendingIntent.FLAG_UPDATE_CURRENT);
-                        alarm.cancel(alarmIntent);
-                        Toast.makeText(IncomeActivity.this, "Alarm is closed!", Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                });
-        menu.add("Exit").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                finishAffinity();
-                return true;
-            }
-        });
-
-        return true;
-    }
-
-    public void inputDialog() {
-
-        AlertDialog.Builder alertb = new AlertDialog.Builder(IncomeActivity.this);
-        LayoutInflater inflater = LayoutInflater.from(IncomeActivity.this);
-        View v = inflater.inflate(R.layout.timepicker, null);
-        AlertDialog alert = alertb.create();
-        alert.setView(v);
-
-        TimePicker timePicker = v.findViewById(R.id.timePicker1);
-        Button btnSet = v.findViewById(R.id.set);
-        Button btnCancel = v.findViewById(R.id.cancel);
-
-
-        Intent i = new Intent(IncomeActivity.this, AlertReceiver.class);
-        i.putExtra("notificationId", notificationId);
-
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(IncomeActivity.this, 2, i, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        btnSet.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                int hour = timePicker.getCurrentHour();
-                int min = timePicker.getCurrentMinute();
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH) + 1;
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-                Calendar startTime = Calendar.getInstance();
-                startTime.set(Calendar.HOUR_OF_DAY, hour);
-                startTime.set(Calendar.MINUTE, min);
-                startTime.set(Calendar.SECOND, 0);
-
-                String title = "INCOME REMINDER";
-                String content = "Time to save money!";
-                TimeNotification newData = new TimeNotification(title, content, hour, min, year, month, day);
-                mySQLiteAdapter.addNotificationList(newData);
-
-                long alarmStartTime = startTime.getTimeInMillis();
-                alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, AlarmManager.INTERVAL_DAY, alarmIntent);
-                Toast.makeText(IncomeActivity.this, "Done!", Toast.LENGTH_SHORT).show();
-                finish();
-                startActivity(getIntent());
-                alert.dismiss();
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(IncomeActivity.this, "Cancelled!", Toast.LENGTH_SHORT).show();
-                finish();
-                startActivity(getIntent());
-
-            }
-        });
-
-        alert.show();
-
-    }
-
     public void dotOnClick(View view) {
         setWorkings(".");
     }
@@ -523,5 +376,131 @@ public class IncomeActivity extends AppCompatActivity {
 
     public void plusOnClick(View view) {
         setWorkings("+");
+    }
+
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu,menu);
+        menu.add("Home Page").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            Intent i;
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                i = new Intent(IncomeActivity.this, NewActivity.class);
+                startActivity(i);
+                i.putExtra("uid", uid);
+                return false;
+            }
+        });
+        menu.add("Expenses").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            Intent i;
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                i = new Intent(IncomeActivity.this, ExpensesActivity.class);
+                startActivity(i);
+                i.putExtra("uid", uid);
+                return false;
+            }
+        });
+        menu.add("Set notification alarm")
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        inputDialog();
+                        return true;
+                    }
+                });
+        menu.add("Close notification alarm")
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Calendar calendar = Calendar.getInstance();
+                        int year = calendar.get(Calendar.YEAR);
+                        int month = calendar.get(Calendar.MONTH) + 1;
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int min = calendar.get(Calendar.MINUTE);
+
+                        String title = "Cancellation";
+                        String content = "The income notification alarm is cancelled!";
+                        TimeNotification newData = new TimeNotification(title, content, hour, min, year, month, day);
+                        mySQLiteAdapter.addNotificationList(newData);
+
+                        Intent i = new Intent(IncomeActivity.this, AlertReceiver.class);
+                        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+                        PendingIntent alarmIntent = PendingIntent.getBroadcast(IncomeActivity.this,
+                                2, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                        alarm.cancel(alarmIntent);
+                        Toast.makeText(IncomeActivity.this, "Alarm is closed!", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                });
+        menu.add("Exit").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                finishAffinity();
+                return true;
+            }
+        });
+        return true;
+    }
+
+    public void inputDialog() {
+
+        AlertDialog.Builder alertb = new AlertDialog.Builder(IncomeActivity.this);
+        LayoutInflater inflater = LayoutInflater.from(IncomeActivity.this);
+        View v = inflater.inflate(R.layout.timepicker, null);
+        AlertDialog alert = alertb.create();
+        alert.setView(v);
+
+        TimePicker timePicker = v.findViewById(R.id.timePicker1);
+        Button btnSet = v.findViewById(R.id.set);
+        Button btnCancel = v.findViewById(R.id.cancel);
+
+        Intent i = new Intent(IncomeActivity.this, AlertReceiver.class);
+        i.putExtra("notificationId", notificationId);
+
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(IncomeActivity.this,
+                2, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        btnSet.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                int hour = timePicker.getCurrentHour();
+                int min = timePicker.getCurrentMinute();
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH) + 1;
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                Calendar startTime = Calendar.getInstance();
+                startTime.set(Calendar.HOUR_OF_DAY, hour);
+                startTime.set(Calendar.MINUTE, min);
+                startTime.set(Calendar.SECOND, 0);
+
+                String title = "INCOME REMINDER";
+                String content = "Time to save money!";
+                TimeNotification newData = new TimeNotification(title, content, hour, min, year, month, day);
+                mySQLiteAdapter.addNotificationList(newData);
+
+                long alarmStartTime = startTime.getTimeInMillis();
+                alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, AlarmManager.INTERVAL_DAY, alarmIntent);
+                Toast.makeText(IncomeActivity.this, "Done!", Toast.LENGTH_SHORT).show();
+                finish();
+                startActivity(getIntent());
+                alert.dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(IncomeActivity.this, "Cancelled!", Toast.LENGTH_SHORT).show();
+                finish();
+                startActivity(getIntent());
+            }
+        });
+        alert.show();
     }
 }

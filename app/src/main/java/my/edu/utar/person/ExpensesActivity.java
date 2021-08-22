@@ -92,14 +92,12 @@ public class ExpensesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_expenses);
 
         mySQLiteAdapter = new SQLiteAdapter(this);
-
         ActionBar actionBar;
         actionBar = getSupportActionBar();
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#C9BD9D"));
         actionBar.setBackgroundDrawable(colorDrawable);
         actionBar.setTitle(Html.fromHtml("<font color=\"white\">" + "Expenses" + "</font>"));
 
-//        Objects.requireNonNull(getSupportActionBar()).hide();
         storageReference = FirebaseStorage.getInstance().getReference("ExpensesImages");
         expenseReference = FirebaseDatabase.getInstance().getReference().child("Expenses");
         Intent intent = getIntent();
@@ -109,7 +107,6 @@ public class ExpensesActivity extends AppCompatActivity {
         expenseET = (EditText)findViewById(R.id.resultstv);
         saveBtn = (Button)findViewById(R.id.savesBtn);
         imageView = findViewById(R.id.exImg);
-        //camBtnOpen = findViewById(R.id.exCam);
         chooseImg = findViewById(R.id.exChs);
         datetv = findViewById(R.id.ex_date);
         preday = findViewById(R.id.ex_preday);
@@ -152,7 +149,6 @@ public class ExpensesActivity extends AppCompatActivity {
         preday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String curDate = datetv.getText().toString();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
                 try {
@@ -162,7 +158,6 @@ public class ExpensesActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
                 String preday = sdf.format(calendar.getTime());
                 datetv.setText(preday);
             }
@@ -183,7 +178,6 @@ public class ExpensesActivity extends AppCompatActivity {
                 String nextday = sdf.format(calendar.getTime());
                 datetv.setText(nextday);
             }
-
         });
 
         chooseImg.setOnClickListener(new View.OnClickListener() {
@@ -238,14 +232,16 @@ public class ExpensesActivity extends AppCompatActivity {
         }else {
             String key = expenseReference.push().getKey();
             if(imageView.getDrawable()==null){
-                Expenses expenses = new Expenses(key, expenseText, description, "N/A",dateText,expensesCategory,monthYearText,category_monthYear,uid);
+                Expenses expenses = new Expenses(key, expenseText, description, "N/A",dateText,
+                        expensesCategory,monthYearText,category_monthYear,uid);
                 expenseReference.child(key).setValue(expenses);
                 finish();
                 startActivity(getIntent());
             }else{
                 String imageId;
                 imageId = System.currentTimeMillis()+"."+getExtension(imgUri);
-                Expenses expenses = new Expenses(key, expenseText, description, imageId,dateText,expensesCategory,monthYearText,category_monthYear,uid);
+                Expenses expenses = new Expenses(key, expenseText, description, imageId,dateText,expensesCategory,
+                        monthYearText,category_monthYear,uid);
                 expenseReference.child(key).setValue(expenses);
                 StorageReference ref = storageReference.child(imageId);
 
@@ -254,25 +250,23 @@ public class ExpensesActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess (UploadTask.TaskSnapshot taskSnapshot){
                                 //Uri uploadUri = taskSnapshot.getUploadSessionUri();
-                                Toast.makeText(ExpensesActivity.this, "Image uploaded successfully", Toast.LENGTH_SHORT).show();
-
+                                Toast.makeText(ExpensesActivity.this, "Image uploaded successfully",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }).
                         addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure (@NonNull Exception e){
-                                Toast.makeText(ExpensesActivity.this, "Fail to upload image", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ExpensesActivity.this, "Fail to upload image",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
-
                 finish();
                 startActivity(getIntent());
-
             }
             //save to firebase storage
             Toast.makeText(ExpensesActivity.this, "Data saved successfully.", Toast.LENGTH_LONG).show();
         }
-
     }
 
 
@@ -292,12 +286,6 @@ public class ExpensesActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 100) {
-//            Bitmap captureImage = (Bitmap) data.getExtras().get("data");
-//            imgUri = data.getData();
-//            imageView.setImageBitmap(captureImage);
-//        }
-
         if(requestCode==1 && resultCode==RESULT_OK && data!=null && data.getData()!=null){
             imgUri = data.getData();
             imageView.setImageURI(imgUri);
@@ -385,7 +373,6 @@ public class ExpensesActivity extends AppCompatActivity {
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int hour = calendar.get(Calendar.HOUR_OF_DAY);
                         int min = calendar.get(Calendar.MINUTE);
-
                         String title = "Cancellation";
                         String content = "The expenses notification alarm is cancelled!";
                         TimeNotification newData = new TimeNotification(title, content, hour, min, year, month, day);
@@ -393,7 +380,8 @@ public class ExpensesActivity extends AppCompatActivity {
 
                         Intent i = new Intent(ExpensesActivity.this, AlertReceiver.class);
                         AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-                        PendingIntent alarmIntent = PendingIntent.getBroadcast(ExpensesActivity.this, 1, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                        PendingIntent alarmIntent = PendingIntent.getBroadcast(ExpensesActivity.this, 1,
+                                i, PendingIntent.FLAG_UPDATE_CURRENT);
                         alarm.cancel(alarmIntent);
                         Toast.makeText(ExpensesActivity.this, "Alarm is closed!", Toast.LENGTH_SHORT).show();
                         return true;
@@ -406,7 +394,6 @@ public class ExpensesActivity extends AppCompatActivity {
                 return true;
             }
         });
-
         return true;
     }
 
@@ -425,7 +412,8 @@ public class ExpensesActivity extends AppCompatActivity {
         Intent i = new Intent(ExpensesActivity.this, AlertReceiver.class);
         i.putExtra("notificationId", notificationId);
 
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(ExpensesActivity.this, 1, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(ExpensesActivity.this, 1,
+                i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
 
